@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo:4.2.5
+    container_name:  notice-board-mongo
+    ports: 
+      - 27017:27017 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vnoticeboard
+    container_name: vnoticeboard
+    restart: unless-stopped
+    environment:
+      - MONGOURI=mongodb://test-mongo:27017/
+      - dbName=noticeboardmongo
+      - REDIS_PORT=6379
+      - JWT_SECRET=I###___Will****Never&&&&Tell&&&&You
+      - API_PORT=3000
+      - API_PREFIX=/api/v1
+    ports:
+      - '3000:3000'
+    command: bash -c "npm run start:dev"
+    volumes:
+      - ./:/app/
+    depends_on:
+      - mongo
+volumes:
+  dbdata:
